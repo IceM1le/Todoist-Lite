@@ -1,13 +1,13 @@
 from fastapi import FastAPI
-from app.core.config import settings
 
-# Создаём экземпляр приложения
+from app.api.v1.auth import router
 app = FastAPI(
     title="Todoist Lite",
     description="Todo list",
     version="0.1.0"
 )
+app.include_router(router)
 
 @app.get("/ping")
 async def ping():
-    return {"message": "pong", "secret_loaded": bool(settings.secret_key)}
+    return {"message": "pong"}

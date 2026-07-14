@@ -9,6 +9,7 @@ from sqlalchemy import pool
 
 from alembic import context
 import app.models
+import app.models.user
 import app.core.database as database
 
 # this is the Alembic Config object, which provides

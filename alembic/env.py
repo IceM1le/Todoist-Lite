@@ -1,12 +1,20 @@
+import os
+
+from dotenv import load_dotenv
+
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
+import app.models
+import app.core.database as database
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
+load_dotenv()
+
 config = context.config
 
 # Interpret the config file for Python logging.
@@ -18,12 +26,25 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = database.Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
+database_url = os.getenv("DATABASE_URL")
+if database_url:
+    config.set_main_option("sqlalchemy.url", database_url)
+else:
+    raise RuntimeError("DATABASE_URL not set in environment")
+if "postgresql+asyncpg://" in database_url:
+    database_url = database_url.replace("postgresql+asyncpg://", "postgresql://")
+config.set_main_option("sqlalchemy.url", database_url)
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
+
+target_metadata = database.Base.metadata
 
 
 def run_migrations_offline() -> None:
@@ -38,7 +59,8 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+
+    url = database_url
     context.configure(
         url=url,
         target_metadata=target_metadata,

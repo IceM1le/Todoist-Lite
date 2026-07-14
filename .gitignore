@@ -1,0 +1,24 @@
+# Секреты и окружение
+.env
+.env.local
+
+# Кеш Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+
+# Виртуальное окружение
+venv/
+.env/
+.venv/
+
+# Редакторы кода
+.vscode/
+.idea/
+
+# Логи и базы данных
+*.log
+*.db
+*.sqlite3

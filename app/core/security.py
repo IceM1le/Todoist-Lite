@@ -1,5 +1,4 @@
-import datetime
-from datetime import timezone
+from datetime import timezone, datetime, timedelta
 
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -13,7 +12,7 @@ from app.core.database import get_db
 from app.models.user import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 def hash_password(password: str) -> str:
@@ -28,7 +27,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()
-    expire = datetime.datetime.now(timezone.utc) + datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
@@ -42,7 +41,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
         result = await db.execute(select(User).where(User.name == username))
         user = result.scalars().one_or_none()
         if user:
-            return user
+            yield user
         else:
             raise HTTPException(status_code=404, detail="User not found")
     except JWTError:

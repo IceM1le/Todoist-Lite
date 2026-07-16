@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.api.v1.auth import router
+from app.api.v1 import router
 app = FastAPI(
     title="Todoist Lite",
     description="Todo list",
@@ -8,6 +8,10 @@ app = FastAPI(
 )
 app.include_router(router)
 
-@app.get("/ping")
+@app.get("", status_code=200)
+async def index():
+    return {"message": "Start page"}
+
+@app.get("/ping", status_code=200)
 async def ping():
     return {"message": "pong"}

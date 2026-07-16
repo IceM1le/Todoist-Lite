@@ -8,6 +8,7 @@ __pycache__/
 *.pyo
 .pytest_cache/
 .coverage
+htmlcov/
 
 # Виртуальное окружение
 venv/
@@ -17,8 +18,19 @@ venv/
 # Редакторы кода
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # Логи и базы данных
 *.log
 *.db
 *.sqlite3
+
+# Файлы сборки и дистрибутивы
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Alembic
+alembic/__pycache__/

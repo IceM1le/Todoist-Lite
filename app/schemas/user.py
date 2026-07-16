@@ -7,4 +7,4 @@ class UserLogin(BaseModel):
 
 
 class UserCreate(UserLogin):
-    email: str = Field(default="", max_length=255)
+    email: str = Field(..., max_length=255)

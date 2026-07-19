@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todoist Lite</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>📋 Todoist</h1>
+        <div class="header-actions">
+            <button class="theme-toggle" id="theme-toggle" title="Toggle theme">🌙</button>
+            <button id="logout-btn">Log out</button>
+        </div>
+    </header>
+
+    <section class="filters">
+        <input type="text" id="search" placeholder="Search tasks...">
+        <select id="filter-status">
+            <option value="">All</option>
+            <option value="true">Done</option>
+            <option value="false">Active</option>
+        </select>
+        <select id="filter-priority">
+            <option value="">Priority</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+        <select id="sort-by">
+            <option value="id">Sort by ID</option>
+            <option value="title">Title</option>
+            <option value="priority">Priority</option>
+            <option value="due_date">Due date</option>
+            <option value="is_done">Status</option>
+        </select>
+        <select id="sort-order">
+            <option value="asc">Asc</option>
+            <option value="desc">Desc</option>
+        </select>
+        <button id="apply-filters">Apply</button>
+        <button id="create-task-btn">+ New</button>
+    </section>
+
+    <section id="tasks-container"></section>
+
+    <section id="pagination">
+        <button id="prev-page">◀</button>
+        <span id="page-info">Page 1</span>
+        <button id="next-page">▶</button>
+    </section>
+
+    <!-- Modal -->
+    <div id="task-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 id="modal-title">New Task</h2>
+            <form id="task-form">
+                <input type="hidden" id="task-id">
+                <input type="text" id="task-title" placeholder="Title" required>
+                <textarea id="task-description" placeholder="Description" rows="2"></textarea>
+                <input type="number" id="task-priority" placeholder="Priority (1-4)" min="1" max="4" value="2">
+                <input type="datetime-local" id="task-due-date">
+                <label><input type="checkbox" id="task-is-done"> Done</label>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+    <script src="/static/script.js"></script>
+</body>
+</html>

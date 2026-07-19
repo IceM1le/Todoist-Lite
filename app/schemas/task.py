@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class TaskCreate(BaseModel):
-    title: str = Field(..., max_length=100)
+    title: str = Field(..., min_length=1, max_length=100)
     description: str = Field(..., max_length=255)
     priority: int = Field(default=2, ge=1, le=4)
     is_done: bool = Field(default=False)
@@ -14,7 +14,7 @@ class TaskCreate(BaseModel):
     @field_validator('due_date', mode='before')
     @classmethod
     def ensure_timezone(cls, v):
-        if v is None:
+        if v is None or v == "":
             return v
         if isinstance(v, str):
             try:

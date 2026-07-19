@@ -41,43 +41,48 @@ async def get_tasks(page: int = 1,
                     order: str = "asc",
                     db=Depends(get_db), current_user=Depends(get_current_user)):
     query = select(Task).where(Task.owner_id == current_user.id)
+    try:
+        # Фильтр по is_done
+        if is_done is not None:
+            query = query.where(Task.is_done == is_done)
 
-    # Фильтр по is_done
-    if is_done is not None:
-        query = query.where(Task.is_done == is_done)
+        # Фильтр по overdue
+        if overdue:
+            query = query.where(Task.due_date < datetime.datetime.now(datetime.UTC), Task.is_done == False)
+        elif overdue == False:
+            query = query.where(Task.due_date >= datetime.datetime.now(datetime.UTC), Task.is_done == True)
 
-    # Фильтр по overdue
-    if overdue:
-        query = query.where(Task.due_date < datetime.datetime.now(datetime.UTC))
-    elif overdue == False:
-        query = query.where(Task.due_date >= datetime.datetime.now(datetime.UTC))
+        # Фильтр по приоритету
+        if priority is not None:
+            if priority.isdigit() and 1 <= int(priority) <= 4:
+                query = query.where(Task.priority == int(priority))
+            else:
+                raise HTTPException(status_code=400, detail="Invalid priority")
 
-    # Фильтр по приоритету
-    if priority and priority.isdigit() and 1 <= int(priority) <= 4:
-        query = query.where(Task.priority == int(priority))
+        sort_func = asc if order.lower() == "asc" else desc
 
-    sort_func = asc if order.lower() == "asc" else desc
+        # Сортировка
+        if sort_by == "title":
+            query = query.order_by(sort_func(Task.title))
+        elif sort_by == "priority":
+            query = query.order_by(sort_func(Task.priority))
+        elif sort_by == "due_date":
+            query = query.order_by(sort_func(Task.due_date))
+        elif sort_by == "is_done":
+            query = query.order_by(sort_func(Task.is_done))
+        elif sort_by == "id":
+            query = query.order_by(sort_func(Task.id))
+        else:
+            query = query.order_by(sort_func(Task.id))  # сортировка по умолчанию
+        # Пагинация
+        query = query.offset((page - 1) * limit).limit(limit)
+        result = await db.execute(query)
 
-    # Сортировка
-    if sort_by == "title":
-        query = query.order_by(sort_func(Task.title))
-    elif sort_by == "priority":
-        query = query.order_by(sort_func(Task.priority))
-    elif sort_by == "due_date":
-        query = query.order_by(sort_func(Task.due_date))
-    elif sort_by == "is_done":
-        query = query.order_by(sort_func(Task.is_done))
-    else:
-        query = query.order_by(sort_func(Task.id))  # сортировка по умолчанию
-
-    # Пагинация
-    query = query.offset((page - 1) * limit).limit(limit)
-    result = await db.execute(query)
-
-    items = result.scalars().all()
-    count_query = select(func.count()).select_from(query.subquery())
-    total = await db.scalar(count_query)
-
+        items = result.scalars().all()
+        count_query = select(func.count()).select_from(query.subquery())
+        total = await db.scalar(count_query)
+    except Exception as ex:
+        raise HTTPException(status_code=400, detail=f"Invalid data: {str(ex)}")
     return {
         "items": items,
         "total": total,

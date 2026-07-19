@@ -8,3 +8,7 @@ class UserLogin(BaseModel):
 
 class UserCreate(UserLogin):
     email: str = Field(..., max_length=255)
+
+class UserResponse(BaseModel):
+    name: str
+    email: str

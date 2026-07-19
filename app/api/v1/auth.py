@@ -3,9 +3,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 
 from app.core.database import get_db
-from app.core.security import hash_password, verify_password, create_access_token
+from app.core.security import hash_password, verify_password, create_access_token, get_current_user
 from app.models.user import User
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, UserResponse
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -34,3 +34,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db=Depends(get
         raise HTTPException(status_code=400, detail="Bad credentials")
     token = create_access_token(data={"sub": user.name})
     return {"access_token": token, "token_type": "bearer"}
+
+@router.get("/me", response_model=UserResponse)
+async def get_me(current_user=Depends(get_current_user)):
+    return current_user

@@ -1,0 +1,47 @@
+# Виртуальное окружение
+venv/
+.venv/
+env/
+
+# Кэш Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Тестовые базы данных
+*.db
+*.sqlite3
+test.db
+
+# Секреты и окружение
+.env
+.env.local
+
+# Редакторы кода
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Логи
+*.log
+
+# Файлы сборки
+dist/
+build/
+*.egg-info/
+
+# Git
+.git/
+.gitignore
+
+# Докер
+Dockerfile
+.dockerignore
+docker-compose.yml (если есть)
+
+# Прочее
+README.md (по желанию, обычно не копируют)

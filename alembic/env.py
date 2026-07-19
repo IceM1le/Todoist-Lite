@@ -80,6 +80,16 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
+
+    # Получаем URL базы данных из переменной окружения (она уже подставлена)
+    url_database = os.getenv("DATABASE_URL")
+    if url_database:
+        # Заменяем асинхронный драйвер на синхронный для Alembic
+        url_database = url_database.replace("sqlite+aiosqlite://", "sqlite://")
+        url_database = url_database.replace("postgresql+asyncpg://", "postgresql://")
+        # Передаём исправленный URL в конфигурацию Alembic
+        config.set_main_option("sqlalchemy.url", url_database)
+
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",

@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     ALGORITHM: str
     database_url: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
+    REDIS_URL: str
 
     class Config:
         env_file = ".env"

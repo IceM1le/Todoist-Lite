@@ -7,5 +7,5 @@ from pathlib import Path
 package_dir = Path(__file__).parent
 for module_info in pkgutil.iter_modules([str(package_dir)]):
     # Пропускаем __init__.py
-    if module_info.name not in ["__init__"]:
+    if module_info.name not in ["__init__", "asdf"]:
         importlib.import_module(f"{__name__}.{module_info.name}")

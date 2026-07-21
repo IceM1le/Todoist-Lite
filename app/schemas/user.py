@@ -8,7 +8,12 @@ class UserLogin(BaseModel):
 
 class UserCreate(UserLogin):
     email: str = Field(..., max_length=255)
+    telegram_chat_id: str = Field(None, max_length=100)
 
 class UserResponse(BaseModel):
     name: str
     email: str
+    telegram_chat_id: str
+
+class UserUpdate(BaseModel):
+    telegram_chat_id: str = Field(None, max_length=100)

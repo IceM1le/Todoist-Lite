@@ -1,7 +1,10 @@
+from typing import Optional
+
 from sqlalchemy import String, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base
 import datetime
+
 
 class User(Base):
     __tablename__ = "users"
@@ -10,8 +13,8 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    telegram_chat_id: Mapped[str] = mapped_column(String(100), unique=True, nullable=True)
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now()
     )
-

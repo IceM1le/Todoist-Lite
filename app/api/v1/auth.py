@@ -1,11 +1,12 @@
 from fastapi import Depends, HTTPException, APIRouter
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.core.security import hash_password, verify_password, create_access_token, get_current_user
 from app.models.user import User
-from app.schemas.user import UserCreate, UserResponse
+from app.schemas.user import UserCreate, UserResponse, UserUpdate
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -37,4 +38,21 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db=Depends(get
 
 @router.get("/me", response_model=UserResponse)
 async def get_me(current_user=Depends(get_current_user)):
+    return current_user
+
+@router.patch("/me", response_model=UserResponse)
+async def update_me(user_update: UserUpdate, db: AsyncSession = Depends(get_db), current_user=Depends(get_current_user)):
+    if user_update.telegram_chat_id is not None:
+        # Проверяем, что такой chat_id не занят другим пользователем
+        existing = await db.execute(
+            select(User).where(
+                User.telegram_chat_id == user_update.telegram_chat_id,
+                User.id != current_user.id
+            )
+        )
+        if existing.scalars().first():
+            raise HTTPException(status_code=400, detail="Telegram chat id already in use")
+        current_user.telegram_chat_id = user_update.telegram_chat_id
+        await db.commit()
+        await db.refresh(current_user)
     return current_user

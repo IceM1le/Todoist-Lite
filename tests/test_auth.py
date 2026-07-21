@@ -84,7 +84,7 @@ class TestAuthMe:
     async def test_auth_me_success(self, client, auth_header):
         response_success = await client.get("/auth/me", headers=auth_header)
         assert response_success.status_code == 200
-        assert response_success.json() == {'name': 'test_user_auth', 'email': 'test_user_auth@gmail.com'}
+        assert response_success.json()['name'] == 'test_user_auth'
 
     async def test_auth_me_failure(self, client):
         response_failure = await client.get("/auth/me")

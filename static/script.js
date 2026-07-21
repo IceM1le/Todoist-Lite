@@ -239,6 +239,42 @@ function logout() {
     window.location.href = '/login';
 }
 
+// ----- Settings (Profile) -----
+async function loadProfile() {
+    const resp = await apiRequest('/auth/me');
+    if (resp && resp.ok) {
+        const data = await resp.json();
+        document.getElementById('settings-username').value = data.name || '';
+        document.getElementById('settings-email').value = data.email || '';
+        document.getElementById('settings-telegram-id').value = data.telegram_chat_id || '';
+    }
+}
+
+async function saveProfile(telegramChatId) {
+    const resp = await apiRequest('/auth/me', {
+        method: 'PATCH',
+        body: JSON.stringify({ telegram_chat_id: telegramChatId || null })
+    });
+    if (resp && resp.ok) {
+        showToast('Профиль обновлён!', 'success');
+        closeSettingsModal();
+        return true;
+    } else if (resp) {
+        const err = await resp.json();
+        showToast(err.detail || 'Ошибка обновления', 'error');
+        return false;
+    }
+}
+
+function openSettingsModal() {
+    document.getElementById('settings-modal').classList.add('active');
+    loadProfile();
+}
+
+function closeSettingsModal() {
+    document.getElementById('settings-modal').classList.remove('active');
+}
+
 // ----- Escape helper -----
 function escapeHtml(unsafe) {
     return unsafe.replace(/[&<>"]/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[m] || m));
@@ -316,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPage++; loadTasks();
     });
 
-    // Modal controls
+    // Modal controls for tasks
     document.getElementById('create-task-btn')?.addEventListener('click', () => openModal('New Task'));
     const closeBtn = document.querySelector('.close-btn');
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
@@ -345,6 +381,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Settings button and modal
+    document.getElementById('settings-btn')?.addEventListener('click', openSettingsModal);
+    document.getElementById('settings-close')?.addEventListener('click', closeSettingsModal);
+    document.getElementById('settings-modal')?.addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeSettingsModal();
+    });
+    document.getElementById('how-to-get-id')?.addEventListener('click', () => {
+        const inst = document.getElementById('telegram-instruction');
+        inst.style.display = inst.style.display === 'none' ? 'block' : 'none';
+    });
+    document.getElementById('settings-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const chatId = document.getElementById('settings-telegram-id').value.trim();
+        await saveProfile(chatId || null);
+    });
+
     // Initial load on main page
     if (document.getElementById('tasks-container')) {
         if (!isAuthenticated()) {
@@ -353,4 +405,32 @@ document.addEventListener('DOMContentLoaded', () => {
             loadTasks();
         }
     }
+        // ===== Settings (Profile) =====
+    async function loadProfile() {
+        const resp = await apiRequest('/auth/me');
+        if (resp && resp.ok) {
+            const data = await resp.json();
+            document.getElementById('settings-username').value = data.name || '';
+            document.getElementById('settings-email').value = data.email || '';
+            document.getElementById('settings-telegram-id').value = data.telegram_chat_id || '';
+        }
+    }
+
+    // Инициализация обработчиков
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('settings-btn')?.addEventListener('click', openSettingsModal);
+        document.getElementById('settings-close')?.addEventListener('click', closeSettingsModal);
+        document.getElementById('settings-modal')?.addEventListener('click', function(e) {
+            if (e.target === e.currentTarget) closeSettingsModal();
+        });
+        document.getElementById('how-to-get-id')?.addEventListener('click', function() {
+            const inst = document.getElementById('telegram-instruction');
+            inst.style.display = inst.style.display === 'none' ? 'block' : 'none';
+        });
+        document.getElementById('settings-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const chatId = document.getElementById('settings-telegram-id').value.trim();
+            await saveProfile(chatId || null);
+        });
+    });
 });

@@ -2,11 +2,10 @@ import httpx
 from app.core.config import settings
 
 TELEGRAM_TOKEN = settings.TELEGRAM_TOKEN
-TELEGRAM_CHAT_ID = settings.TELEGRAM_CHAT_ID
 
-def send_telegram_message(text: str, chat_id: str = None) -> bool:
+def send_telegram_message(text: str, chat_id: str) -> bool:
     """Отправляет сообщение в Telegram """
-    url = f"https://api.telegram.org/bot{settings.TELEGRAM_TOKEN}/sendMessage"
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     payload = {
         "chat_id": chat_id,
         "text": text,

@@ -343,6 +343,22 @@ header h1 { font-weight: 700; font-size: 1.8rem; }
     align-items: center;
     gap: 10px;
 }
+#how-to-get-id {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    padding: 4px 12px;
+}
+#how-to-get-id:hover {
+    background: var(--border);
+}
+#telegram-instruction {
+    background: var(--bg);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
 .toast.error { border-left-color: var(--danger); }
 .toast.success { border-left-color: var(--success); }
 @keyframes slideIn {
@@ -359,3 +375,35 @@ header h1 { font-weight: 700; font-size: 1.8rem; }
     .task-card .task-actions { margin-left: auto; }
 }
 
+/* Settings modal tweaks */
+#settings-form label {
+    display: block;
+    margin: 8px 0 4px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+#settings-form input[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+#how-to-get-id {
+    background: transparent;
+    color: var(--primary);
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    width: auto;
+    cursor: pointer;
+}
+#how-to-get-id:hover {
+    background: var(--border);
+}
+#telegram-instruction {
+    background: var(--bg);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+#settings-error {
+    margin: 10px 0 0;
+}

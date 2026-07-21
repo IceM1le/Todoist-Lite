@@ -63,10 +63,9 @@ def check_deadlines():
                     message_parts.append(f"• {task.title} (просрочено на {days} дн.)")
 
             # Отправляем уведомление этому пользователю
-            # Нужно передать chat_id в функцию send_telegram_message
             send_telegram_message(
                 text="\n".join(message_parts),
-                chat_id=user.telegram_chat_id  # новый параметр
+                chat_id=user.telegram_chat_id
             )
 
         return {"users_notified": len(users)}

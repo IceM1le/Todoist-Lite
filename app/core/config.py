@@ -6,6 +6,8 @@ class Settings(BaseSettings):
     database_url: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     REDIS_URL: str
+    TELEGRAM_TOKEN: str
+    TELEGRAM_CHAT_ID: str
 
     class Config:
         env_file = ".env"

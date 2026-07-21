@@ -1,5 +1,5 @@
 from celery import Celery
-from celery.schedules import crontab
+from celery.schedules import crontab, schedule
 
 from app.core.config import settings
 
@@ -7,7 +7,7 @@ celery_app = Celery(
     "todoist",
     broker=settings.REDIS_URL,
     backend=settings.REDIS_URL,
-    include=["app.core.tasks"]
+    include=["app.core.tasks.scheduled"]
 )
 celery_app.conf.timezone = "UTC"
 celery_app.conf.enable_utc = True
@@ -23,8 +23,8 @@ celery_app.conf.update(
 )
 celery_app.conf.beat_schedule = {
     "check-deadlines": {
-        "task": "app.core.tasks.check_deadlines",
-        "schedule": crontab(hour=9, minute=0),
+        "task": "app.core.tasks.scheduled.check_deadlines",
+        "schedule": schedule(10.0),
     },
 }
 celery_app.autodiscover_tasks(["app.core"])

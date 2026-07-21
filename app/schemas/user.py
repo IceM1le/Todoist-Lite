@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -13,7 +15,7 @@ class UserCreate(UserLogin):
 class UserResponse(BaseModel):
     name: str
     email: str
-    telegram_chat_id: str
+    telegram_chat_id: Optional[str] = Field(None)
 
 class UserUpdate(BaseModel):
     telegram_chat_id: str = Field(None, max_length=100)
